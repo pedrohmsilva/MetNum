@@ -40,7 +40,7 @@ void GaussJordan(int n, float **s, float *b, float *x){
 
 int main(){
 
-	int i;
+	int i, op;
 	int n = 3;
 	float b[3] = {4,0,-1};
 	float x[3];
@@ -60,5 +60,50 @@ int main(){
 	s[2][1] = -1;
 	s[2][2] = -1;
 	
+	while(op != 0) {
+		switch(op) {
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			case 5:
+				break;
+			case 6:
+				GaussJordan(n, s, b, x);
+				for(i=0;i<n;i++){
+					printf("%f\n", x[i]);
+				}
+				break;
+			case 7:
+				break;
+			case 8:
+				break;
+			case 9:
+				break;
+			default:
+				printf("\n\n");
+				printf("Opcoes\n");
+				printf("1. Rotina Determinante\n");
+				printf("2. Rotina SistemaTriangularInferior\n");
+				printf("3. Rotina SistemaTriangularSuperior\n");
+				printf("4. Rotina DecomposicaoLU\n");
+				printf("5. Rotina GaussCompacto\n");
+				printf("6. Rotina GaussJordan\n");
+				printf("7. Rotina Jacobi\n");
+				printf("8. Rotina GaussSeidel\n");
+				printf("9. Rotina MatrizInversa\n");
+				printf("0. SAIR\n");
+				printf("Opcao: ");
+				fflush(stdin);
+				scanf("%d", &op);
+				break;
+		}
+	}
+	
+
 	return 0;
 }
