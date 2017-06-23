@@ -4,7 +4,7 @@
 void GaussJordan(int n, float **s, float *b, float *x){
 	int i, j, k;
 	float m;
-	
+	//Calcular determinante Calcular determinante Calcular determinante Calcular determinante Calcular determinante
 	float **matriz =(float**) malloc(n*sizeof(float*));
 	for (i=0;i<n;i++)
 	{
@@ -39,7 +39,7 @@ void GaussJordan(int n, float **s, float *b, float *x){
 }
 
 int main(){
-	
+
 	int i;
 	int n = 3;
 	float b[3] = {4,0,-1};
