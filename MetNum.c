@@ -1,5 +1,44 @@
 #include <stdio.h>
 #include <malloc.h>
+#include <math.h>
+
+float Determinante(int n, float **m){
+	int sinal = 1;
+	int i, j, k;
+	float det = 0;
+	float **A;
+
+	if(n == 1){
+		return m[0][0];
+	}
+	else {
+
+		A =(float**) malloc((n-1)*sizeof(float*));
+		for (i=0;i<n;i++)
+		{
+			A[i] = (float*) malloc((n-1)*sizeof(float));
+		}
+
+		for(k=0;k<n;k++){
+
+			for (j=0;j<k;j++){
+				for(i=1;i<n;i++){
+					A[i-1][j] = m[i][j];
+				}
+			}
+			for (j=k+1;j<n;j++){
+				for(i=1;i<n;i++){
+					A[i-1][j-1] = m[i][j];
+				}
+			}
+
+			det += sinal*(m[0][k]*Determinante(n-1, A));
+			sinal *= -1;
+		}
+	}
+
+	return det;
+}
 
 void GaussJordan(int n, float **s, float *b, float *x){
 	int i, j, k;
@@ -38,11 +77,101 @@ void GaussJordan(int n, float **s, float *b, float *x){
 	}
 }
 
+void Jacobi(int n, float **s, float *b, float e, float *x0, int k, float *x, int *ite){
+	int i, j;
+	float max = 0, max2 = 0, aux = 0;
+	char criterio = 0;
+	float *anterior, *atual;
+
+	float **matriz =(float**) malloc(n*sizeof(float*));
+	for (i=0;i<n;i++)
+	{
+		matriz[i] = (float*) malloc((n)*sizeof(float));
+	}
+
+	for(i=0;i<n;i++){
+		for(j=0;j<n;j++){
+			matriz[i][j] = s[i][j];
+		}
+	}
+	//critério das linhas
+	for(i=0;i<n;i++){
+		for (j=0;j<i;j++){
+			aux += fabs(matriz[i][j]/matriz[i][i]);
+		}
+		for (j=i+1;j<n;j++){
+			aux += fabs(matriz[i][j]/matriz[i][i]);
+		}
+		if(aux > max) max = aux;
+		aux = 0;
+	}
+	if(max < 1) criterio = 1;
+	else{ //critério das colunas
+		max = 0;
+		for(j=0;j<n;j++){
+			for (i=0;i<j;i++){
+				aux += fabs(matriz[i][j]/matriz[j][j]);
+			}
+			for (i=j+1;i<n;i++){
+				aux += fabs(matriz[i][j]/matriz[j][j]);
+			}
+			if(aux > max) max = aux;
+			aux = 0;
+		}
+		if(max < 1) criterio = 1;
+	}
+	//CALCULAR DET CALCULAR DET CALCULAR DET CALCULAR DET CALCULAR DET
+
+	if(criterio){
+		atual = (float*) malloc((n)*sizeof(float));
+		anterior = x0;
+
+		for((*ite)=0;(*ite)<k;(*ite)++){
+			for(i=0;i<n;i++){
+				atual[i] = b[i];
+				for (j=0;j<i;j++){
+					atual[i] += matriz[i][j]*anterior[j]; 
+				}
+				for (j=i+1;j<n;j++){
+					atual[i] += matriz[i][j]*anterior[j]; 
+				}
+				atual[i] /= matriz[i][i];
+			}
+
+			max = 0;
+			for(i=0;i<n;i++){
+				aux = fabs(atual[i] - anterior[i]);
+				if(aux > max) max = aux;
+			}
+			for(i=0;i<n;i++){
+				aux = fabs(atual[i]);
+				if(aux > max2) max2 = aux;
+			}
+
+			if(max/max2 < e) {
+				for(i=0;i<n;i++){
+					x[i] = atual[i];
+				}
+				return;
+			}
+
+			for(i=0;i<n;i++){
+				anterior[i] = atual[i];
+			}
+		}
+		for(i=0;i<n;i++){
+			x[i] = atual[i];
+		}
+	}
+	else printf("Não satisfaz critério.\n");
+}
+
 int main(){
 
 	int i, op;
 	int n = 3;
 	float b[3] = {4,0,-1};
+	float chute[3] = {0.8, 0.7, 1.5};
 	float x[3];
 	float **s =(float**) malloc(n*sizeof(float*));
 	for (i=0;i<n;i++)
@@ -59,7 +188,14 @@ int main(){
 	s[2][0] = 1;
 	s[2][1] = -1;
 	s[2][2] = -1;
-	
+/*
+	Jacobi(3, s, b, 0.01, chute, 20, x, &i);
+				printf("%f\n", x[0]);
+				printf("%f\n", x[1]);
+				printf("%f\n", x[2]);
+*/
+	printf("\nDet:%f\n", Determinante(n, s));
+	/*
 	while(op != 0) {
 		switch(op) {
 			case 1:
@@ -79,6 +215,10 @@ int main(){
 				}
 				break;
 			case 7:
+				Jacobi(3, s, b, 0.01, chute, 20, x, &i);
+				printf("%f\n", x[0]);
+				printf("%f\n", x[1]);
+				printf("%f\n", x[2]);
 				break;
 			case 8:
 				break;
@@ -103,7 +243,7 @@ int main(){
 				break;
 		}
 	}
-	
+	*/
 
 	return 0;
 }
