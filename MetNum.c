@@ -94,6 +94,18 @@ void Jacobi(int n, float **s, float *b, float e, float *x0, int k, float *x, int
 			matriz[i][j] = s[i][j];
 		}
 	}
+
+	for(i=0;i<n;i++){
+		if(s[i][i] == 0){
+			printf("\nImpossível realizar operação. (Divisão por zero)\n");
+			return;
+		} 
+	}
+
+	if(!Determinante(n,s)){
+		printf("\nImpossível realizar operação. (Determinante igual a zero)\n");
+		return;
+	}
 	//critério das linhas
 	for(i=0;i<n;i++){
 		for (j=0;j<i;j++){
@@ -120,7 +132,6 @@ void Jacobi(int n, float **s, float *b, float e, float *x0, int k, float *x, int
 		}
 		if(max < 1) criterio = 1;
 	}
-	//CALCULAR DET CALCULAR DET CALCULAR DET CALCULAR DET CALCULAR DET
 
 	if(criterio){
 		atual = (float*) malloc((n)*sizeof(float));
@@ -130,10 +141,10 @@ void Jacobi(int n, float **s, float *b, float e, float *x0, int k, float *x, int
 			for(i=0;i<n;i++){
 				atual[i] = b[i];
 				for (j=0;j<i;j++){
-					atual[i] += matriz[i][j]*anterior[j]; 
+					atual[i] -= matriz[i][j]*anterior[j]; 
 				}
 				for (j=i+1;j<n;j++){
-					atual[i] += matriz[i][j]*anterior[j]; 
+					atual[i] -= matriz[i][j]*anterior[j]; 
 				}
 				atual[i] /= matriz[i][i];
 			}
@@ -170,8 +181,8 @@ int main(){
 
 	int i, op;
 	int n = 3;
-	float b[3] = {4,0,-1};
-	float chute[3] = {0.8, 0.7, 1.5};
+	float b[3] = {14,11,8};
+	float chute[3] = {0, 0, 0};
 	float x[3];
 	float **s =(float**) malloc(n*sizeof(float*));
 	for (i=0;i<n;i++)
@@ -179,22 +190,29 @@ int main(){
 		s[i] = (float*) malloc((n)*sizeof(float));
 	}
 
-	s[0][0] = 1;
-	s[0][1] = 1;
-	s[0][2] = 2;
-	s[1][0] = 2;
-	s[1][1] = -1;
-	s[1][2] = -1;
-	s[2][0] = 1;
-	s[2][1] = -1;
-	s[2][2] = -1;
-/*
+	s[0][0] = 10;
+	s[0][1] = 2;
+	s[0][2] = 1;
+	s[1][0] = 1;
+	s[1][1] = 5;
+	s[1][2] = 1;
+	s[2][0] = 2;
+	s[2][1] = 3;
+	s[2][2] = 10;
+
 	Jacobi(3, s, b, 0.01, chute, 20, x, &i);
-				printf("%f\n", x[0]);
-				printf("%f\n", x[1]);
-				printf("%f\n", x[2]);
-*/
-	printf("\nDet:%f\n", Determinante(n, s));
+	printf("%f\n", x[0]);
+	printf("%f\n", x[1]);
+	printf("%f\n", x[2]);
+	printf("%d\n", i);
+
+	GaussJordan(3, s, b, x);
+	printf("\n%f\n", x[0]);
+	printf("%f\n", x[1]);
+	printf("%f\n", x[2]);
+
+
+
 	/*
 	while(op != 0) {
 		switch(op) {
