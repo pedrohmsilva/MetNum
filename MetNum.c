@@ -69,8 +69,8 @@ void SistemaTriangularSuperior(int ordem, float **matriz, float *termos, float *
 }
 
 void DecomposicaoLU(int ordem, float **matriz, float *termos, float **solucao) {
-	int i, j, linha, coluna, uc, lc, uf, lf, k, n, o = 0;
-	float **m, **l, **u, *y, soma;
+	int i, j, linha, coluna, uc, lc, k, n, o = 0;
+	float **l, **u, *y, soma;
 	
 	for(i = ordem; i >= 1; i--) {
 		if(Determinante(i, matriz) == 0) {
@@ -136,14 +136,14 @@ void DecomposicaoLU(int ordem, float **matriz, float *termos, float **solucao) {
 		
 		printf("Solucao = (");
 		for(i = 0; i < ordem; i++) {
-			printf("%f ", solucao[i]);
+			printf("%f ", (*solucao)[i]);
 		}
 		printf(")");
 	}
 }
 
 void GaussCompacto(int ordem, float **matriz, float **termos, float **solucao) {
-	int i, j, o = 0, n, uc, lc, k, linha, coluna;
+	int i, j, o = 0, n, uc, lc, k;
 	float **a, **u, **l, soma;
 	
 	for(i = ordem; i >= 1; i--) {
@@ -213,7 +213,7 @@ void GaussCompacto(int ordem, float **matriz, float **termos, float **solucao) {
 		
 		printf("Solucao = (");
 		for(i = 0; i < ordem; i++) {
-			printf("%f ", solucao[i]);
+			printf("%f ", (*solucao)[i]);
 		}
 		printf(")");
 	}
