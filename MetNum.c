@@ -3,6 +3,45 @@
 #include <malloc.h>
 #include <math.h>
 
+
+float Determinante(int n, float **m){
+	int sinal = 1;
+	int i, j, k;
+	float det = 0;
+	float **A;
+
+	if(n == 1){
+		return m[0][0];
+	}
+	else {
+
+		A =(float**) malloc((n-1)*sizeof(float*));
+		for (i=0;i<n;i++)
+		{
+			A[i] = (float*) malloc((n-1)*sizeof(float));
+		}
+
+		for(k=0;k<n;k++){
+
+			for (j=0;j<k;j++){
+				for(i=1;i<n;i++){
+					A[i-1][j] = m[i][j];
+				}
+			}
+			for (j=k+1;j<n;j++){
+				for(i=1;i<n;i++){
+					A[i-1][j-1] = m[i][j];
+				}
+			}
+
+			det += sinal*(m[0][k]*Determinante(n-1, A));
+			sinal *= -1;
+		}
+	}
+
+	return det;
+}
+
 void SistemaTriangularInferior(int ordem, float **matriz, float *termos, float **solucao) {
 	int i, j;
 	float s = 0;
@@ -168,11 +207,6 @@ void GaussCompacto(int ordem, float **matriz, float **termos, float **solucao) {
 	}
 }
 
-
-
-
-
-
 void GaussSeidel(int ordem, float **matriz, float *termos, float e, float *inicial, int maximo, float **solucao, int *iteracoes) {
 	float soma, a, d, max, *b, *x, numerador, denominador, erro, *anterior;
 	int i, j, o = 0, k;
@@ -305,44 +339,6 @@ void GaussSeidel(int ordem, float **matriz, float *termos, float e, float *inici
 			(*iteracoes) = k;
 		}
 	}
-}
-
-float Determinante(int n, float **m){
-	int sinal = 1;
-	int i, j, k;
-	float det = 0;
-	float **A;
-
-	if(n == 1){
-		return m[0][0];
-	}
-	else {
-
-		A =(float**) malloc((n-1)*sizeof(float*));
-		for (i=0;i<n;i++)
-		{
-			A[i] = (float*) malloc((n-1)*sizeof(float));
-		}
-
-		for(k=0;k<n;k++){
-
-			for (j=0;j<k;j++){
-				for(i=1;i<n;i++){
-					A[i-1][j] = m[i][j];
-				}
-			}
-			for (j=k+1;j<n;j++){
-				for(i=1;i<n;i++){
-					A[i-1][j-1] = m[i][j];
-				}
-			}
-
-			det += sinal*(m[0][k]*Determinante(n-1, A));
-			sinal *= -1;
-		}
-	}
-
-	return det;
 }
 
 void GaussJordan(int n, float **s, float *b, float *x){
@@ -482,7 +478,6 @@ void Jacobi(int n, float **s, float *b, float e, float *x0, int k, float *x, int
 	else printf("Não satisfaz critério.\n");
 }
 
-
 void MatrizInversa(int n, float **m, float ** inv){
 	int i, j, op;
 	float **id = (float**) malloc(n*sizeof(float*));
@@ -504,7 +499,7 @@ void MatrizInversa(int n, float **m, float ** inv){
 	scanf("%d", &op);
 	if(op == 1){
 		for(i=0;i<n;i++){
-			DecomposicaoLU(n,m,id[i],sol);
+			DecomposicaoLU(n,m,id[i],&sol);
 			for(j=0;j<n;j++){
 				inv[j][i] = sol[j];
 			} 
@@ -512,7 +507,7 @@ void MatrizInversa(int n, float **m, float ** inv){
 	}
 	if(op == 2){
 		for(i=0;i<n;i++){
-			GaussCompacto(n,m,id[i],sol);
+			GaussCompacto(n,m,&id[i],&sol);
 			for(j=0;j<n;j++){
 				inv[j][i] = sol[j];
 			} 
@@ -522,28 +517,10 @@ void MatrizInversa(int n, float **m, float ** inv){
 
 int main(){
 
-	int i, op;
-	int n = 3;
-	float b[3] = {14,11,8};
-	float chute[3] = {0, 0, 0};
-	float x[3];
-	float **s =(float**) malloc(n*sizeof(float*));
-	for (i=0;i<n;i++)
-	{
-		s[i] = (float*) malloc((n)*sizeof(float));
-	}
+	int i, j, op = 15;
+	int n;
+	float *b, *x0, *x, **A;
 
-	s[0][0] = 10;
-	s[0][1] = 2;
-	s[0][2] = 1;
-	s[1][0] = 1;
-	s[1][1] = 5;
-	s[1][2] = 1;
-	s[2][0] = 2;
-	s[2][1] = 3;
-	s[2][2] = 10;
-
-	/*
 	while(op != 0) {
 		switch(op) {
 			case 1:
@@ -557,48 +534,19 @@ int main(){
 				}
 				for(i=0;i<n;i++){
 					for(j=0;j<n;j++){
-						printf("\nDigite o elemento a%d%d da matriz:",i,j);
+						printf("\nDigite o elemento a%d%d da matriz:",i+1,j+1);
 						fflush(stdin);
 						scanf("%f", &A[i][j]);
 					} 
 				}
-				printf("\nDeterminante:%f",Determinante(n,A));	
+				printf("\nDeterminante:%f",Determinante(n,A));
+				op = 15;
 				break;
 			case 2:
-				printf("Digite a ordem da matriz:");
+				printf("Digite a ordem da matriz de coeficientes:");
 				fflush(stdin);
 				scanf("%d", &n);
-				A =(float**) malloc(n*sizeof(float*));
-				for (i=0;i<n;i++)
-				{
-					A[i] = (float*) malloc((n)*sizeof(float));
-				}
-				b = (float*) malloc((n)*sizeof(float));
-				for(i=0;i<n;i++){
-					for(j=0;j<n;j++){
-						if(i<=j){
-							printf("\nDigite o elemento a%d%d da matriz de coeficientes:",i,j);
-							fflush(stdin);
-							scanf("%f", &A[i][j]);
-						}
-					} 
-				}
-				for(j=0;j<n;j++){
-					printf("\nDigite o elemento b%d do vetor dos termos independentes:",j);
-					fflush(stdin);
-					scanf("%f", &b[j]);
-				} 
-				SistemaTriangularSuperior(n,A,b,x);
-				printf("\nx = {");
-				for(j=0;j<n;j++){
-					printf("%f, ",b[j]);
-				} 
-				printf("}");
-				break;
-			case 3:
-					printf("Digite a ordem da matriz:");
-				fflush(stdin);
-				scanf("%d", &n);
+				x =(float*) malloc(n*sizeof(float));
 				A =(float**) malloc(n*sizeof(float*));
 				for (i=0;i<n;i++)
 				{
@@ -608,39 +556,69 @@ int main(){
 				for(i=0;i<n;i++){
 					for(j=0;j<n;j++){
 						if(i>=j){
-							printf("\nDigite o elemento a%d%d da matriz de coeficientes:",i,j);
+							printf("\nDigite o elemento a%d%d da matriz de coeficientes [NOTA: lembre que i>=j]:",i+1,j+1);
 							fflush(stdin);
 							scanf("%f", &A[i][j]);
 						}
+						else A[i][j] = 0;
 					} 
 				}
 				for(j=0;j<n;j++){
-					printf("\nDigite o elemento b%d do vetor dos termos independentes:",j);
+					printf("\nDigite o elemento b%d do vetor dos termos independentes:",j+1);
 					fflush(stdin);
 					scanf("%f", &b[j]);
 				} 
-				SistemaTriangularInferior(n,A,b,x);
+				SistemaTriangularInferior(n,A,b,&x);
 				printf("\nx = {");
 				for(j=0;j<n;j++){
-					printf("%f, ",b[j]);
+					printf("%f   ",x[j]);
 				} 
 				printf("}");
+				op = 15;
+				break;
+			case 3:
+					printf("Digite a ordem da matriz:");
+				fflush(stdin);
+				scanf("%d", &n);
+				x =(float*) malloc(n*sizeof(float));
+				A =(float**) malloc(n*sizeof(float*));
+				for (i=0;i<n;i++)
+				{
+					A[i] = (float*) malloc((n)*sizeof(float));
+				}
+				b = (float*) malloc((n)*sizeof(float));
+				for(i=0;i<n;i++){
+					for(j=0;j<n;j++){
+						if(i<=j){
+							printf("\nDigite o elemento a%d%d da matriz de coeficientes [NOTA: lembre que i<=j]:",i+1,j+1);
+							fflush(stdin);
+							scanf("%f", &A[i][j]);
+						}
+						else A[i][j] = 0;
+					} 
+				}
+				for(j=0;j<n;j++){
+					printf("\nDigite o elemento b%d do vetor dos termos independentes:",j+1);
+					fflush(stdin);
+					scanf("%f", &b[j]);
+				} 
+				SistemaTriangularSuperior(n,A,b,&x);
+				printf("\nx = {");
+				for(j=0;j<n;j++){
+					printf("%f   ",x[j]);
+				} 
+				printf("}");
+				op = 15;
 				break;
 			case 4:
 				break;
 			case 5:
 				break;
 			case 6:
-				GaussJordan(n, s, b, x);
-				for(i=0;i<n;i++){
-					printf("%f\n", x[i]);
-				}
+				//GaussJordan(n, s, b, x);
 				break;
 			case 7:
-				Jacobi(3, s, b, 0.01, chute, 20, x, &i);
-				printf("%f\n", x[0]);
-				printf("%f\n", x[1]);
-				printf("%f\n", x[2]);
+				//Jacobi(3, s, b, 0.01, chute, 20, x, &i);
 				break;
 			case 8:
 				break;
@@ -665,7 +643,6 @@ int main(){
 				break;
 		}
 	}
-	*/
 
 	return 0;
 }
