@@ -133,6 +133,12 @@ void DecomposicaoLU(int ordem, float **matriz, float *termos, float **solucao) {
 		SistemaTriangularInferior(ordem, l, termos, &y);
 		
 		SistemaTriangularSuperior(ordem, u, y, solucao);
+		
+		printf("Solucao = (");
+		for(i = 0; i < ordem; i++) {
+			printf("%f ", solucao[i]);
+		}
+		printf(")");
 	}
 }
 
@@ -204,6 +210,12 @@ void GaussCompacto(int ordem, float **matriz, float **termos, float **solucao) {
 		}
 	
 		SistemaTriangularSuperior(ordem, u, *termos, solucao);
+		
+		printf("Solucao = (");
+		for(i = 0; i < ordem; i++) {
+			printf("%f ", solucao[i]);
+		}
+		printf(")");
 	}
 }
 
@@ -398,16 +410,16 @@ void Jacobi(int n, float **s, float *b, float e, float *x0, int k, float *x, int
 
 	for(i=0;i<n;i++){
 		if(s[i][i] == 0){
-			printf("\nImpossÃ­vel realizar operaÃ§Ã£o. (DivisÃ£o por zero)\n");
+			printf("\nImpossível realizar operação. (Divisão por zero)\n");
 			return;
 		} 
 	}
 
 	if(!Determinante(n,s)){
-		printf("\nImpossÃ­vel realizar operaÃ§Ã£o. (Determinante igual a zero)\n");
+		printf("\nImpossível realizar operação. (Determinante igual a zero)\n");
 		return;
 	}
-	//critÃ©rio das linhas
+	//critério das linhas
 	for(i=0;i<n;i++){
 		for (j=0;j<i;j++){
 			aux += fabs(matriz[i][j]/matriz[i][i]);
@@ -419,7 +431,7 @@ void Jacobi(int n, float **s, float *b, float e, float *x0, int k, float *x, int
 		aux = 0;
 	}
 	if(max < 1) criterio = 1;
-	else{ //critÃ©rio das colunas
+	else{ //critério das colunas
 		max = 0;
 		for(j=0;j<n;j++){
 			for (i=0;i<j;i++){
@@ -475,7 +487,7 @@ void Jacobi(int n, float **s, float *b, float e, float *x0, int k, float *x, int
 			x[i] = atual[i];
 		}
 	}
-	else printf("NÃ£o satisfaz critÃ©rio.\n");
+	else printf("Não satisfaz critério.\n");
 }
 
 void MatrizInversa(int n, float **m, float ** inv){
@@ -494,7 +506,7 @@ void MatrizInversa(int n, float **m, float ** inv){
 			id[i][j] = 0; 
 		} 
 	}
-	printf("Determinar a inversa utilizando o MÃ©todo da DecomposiÃ§Ã£o LU ou o MÃ©todo de Gauss Compacto?\n1.DecomposiÃ§Ã£o LU\n2.MÃ©todo de Gauss Compacto\n");
+	printf("Determinar a inversa utilizando o Método da Decomposição LU ou o Método de Gauss Compacto?\n1.Decomposição LU\n2.Método de Gauss Compacto\n");
 	fflush(stdin);
 	scanf("%d", &op);
 	if(op == 1){
@@ -646,4 +658,3 @@ int main(){
 
 	return 0;
 }
-
