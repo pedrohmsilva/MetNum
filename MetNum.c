@@ -658,7 +658,7 @@ int main(){
 					fflush(stdin);
 					scanf("%f", &b[j]);
 				}
-				printf("Solucao = {");
+				printf("\nSolucao = {");
 				DecomposicaoLU(n,A,b,&x);
 				printf("}");
 				op = 15;
@@ -687,7 +687,7 @@ int main(){
 					fflush(stdin);
 					scanf("%f", &b[j]);
 				} 
-				printf("Solucao = {");
+				printf("\nSolucao = {");
 				GaussCompacto(n,A,&b,&x);
 				printf("}");
 				op = 15;
