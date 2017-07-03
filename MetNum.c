@@ -480,7 +480,7 @@ void Jacobi(int n, float **s, float *b, float e, float *x0, int k, float *x, int
 				for(i=0;i<n;i++){
 					x[i] = atual[i];
 				}
-				return;
+				break;
 			}
 
 			for(i=0;i<n;i++){
